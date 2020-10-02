@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.16)
 
 if (NOT DEFINED FUN_TIMES_BOOST_VERSION)
-    set(FUN_TIMES_BOOST_VERSION "1.73.0" CACHE STRING "Boost Version")
+    set(FUN_TIMES_BOOST_VERSION "1.74.0" CACHE STRING "Boost Version")
 endif ()
 
 include(FetchContent)
@@ -47,19 +47,20 @@ BuildCmakeContent(fmtlib fmt
         "-DFMT_TEST=OFF"
         "-DFMT_DOC=OFF")
 
-FetchContent_Declare(nlohmann_jsonlib
-        GIT_REPOSITORY git@github.com:nlohmann/json.git
-        GIT_TAG v3.9.1)
-BuildCmakeContent(nlohmann_jsonlib nlohmann_json
-    CMAKE_ARGS
-        "-DJSON_BuildTests=OFF"
-        "-DJSON_Install=ON")
+#FetchContent_Declare(nlohmann_jsonlib
+#        GIT_REPOSITORY git@github.com:nlohmann/json.git
+#        GIT_TAG v3.9.1)
+#BuildCmakeContent(nlohmann_jsonlib nlohmann_json
+#    CMAKE_ARGS
+#        "-DJSON_BuildTests=OFF"
+#        "-DJSON_Install=ON")
 
 FetchContent_Declare(boost_json_lib
         GIT_REPOSITORY git@github.com:CPPAlliance/json.git
         GIT_TAG 0da206074fbee99877ae82bb73afbc567e19a7b6)
 BuildCmakeContent(boost_json_lib boost_json
         CMAKE_ARGS
+        "-DBOOST_ROOT=${BOOST_ROOT}"
         "-DBOOST_JSON_STANDALONE=OFF"
         "-DBOOST_JSON_BUILD_TESTS=OFF"
         "-DBOOST_JSON_BUILD_FUZZERS=OFF"
@@ -70,14 +71,17 @@ add_compile_definitions(
         "BOOST_ASIO_NO_DEPRECATED=1"
         "BOOST_ASIO_DISABLE_CONCEPTS=1")
 
-find_package(Boost CONFIG REQUIRED COMPONENTS system thread)
+find_package(Boost CONFIG REQUIRED COMPONENTS container system thread)
 find_package(Threads)
 find_package(fmt CONFIG)
-find_package(nlohmann_json CONFIG)
-find_package(OpenSSL)
-find_package(boost_json)
+#find_package(nlohmann_json CONFIG)
+#find_package(OpenSSL)
 
-add_subdirectory(lib)
+add_library(boost_pfr INTERFACE IMPORTED GLOBAL)
+target_include_directories(boost_pfr SYSTEM INTERFACE "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/submodules/magic_get/include>")
+target_link_libraries(boost_pfr INTERFACE Boost::boost)
+add_library(Boost::pfr ALIAS boost_pfr)
+
 
 add_subdirectory(pre-cxx20)
 if (CMAKE_CXX_STANDARD GREATER_EQUAL 20)

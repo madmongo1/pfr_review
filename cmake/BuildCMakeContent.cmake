@@ -70,9 +70,10 @@ function(BuildCMakeContent bcc_NAME bcc_PACKAGE)
         message(STATUS "[dependencies] Building ${bcc_NAME}")
         set(${bcc_NAME}_INSTALLED "" CACHE INTERNAL "")
         execute_process(COMMAND "${CMAKE_COMMAND}" ${bcc_build_options}
-                RESULT_VARIABLE bcc_RESULT
+                RESULTS_VARIABLE bcc_RESULTS
                 ERROR_VARIABLE bcc_ERROR)
         if (bcc_RESULT)
+            message(STATUS "last output:\n${bcc_RESULTS}")
             message(FATAL_ERROR "build failed:\n${bcc_ERROR}")
         else()
             set("${bcc_NAME}_BUILT" "${bcc_build_options}" CACHE INTERNAL "${bcc_NAME} has been built")
