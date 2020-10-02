@@ -1,4 +1,9 @@
 cmake_minimum_required(VERSION 3.16)
+if (NOT DEFINED CMAKE_TOOLCHAIN_FILE)
+    message(FATAL_ERROR
+            "This cmake project requires that you have defined CMAKE_TOOLCHAIN_FILE."
+            " There are some really good toolchains at https:://github.com/madmongo1/polly")
+endif ()
 
 if (NOT DEFINED FUN_TIMES_BOOST_VERSION)
     set(FUN_TIMES_BOOST_VERSION "1.74.0" CACHE STRING "Boost Version")
@@ -24,7 +29,7 @@ if (NOT DEFINED BOOST_ROOT)
             container
             system
             thread)
-else()
+else ()
     message(STATUS "[dependencies] BOOST_ROOT=${BOOST_ROOT}")
 endif ()
 
@@ -43,7 +48,7 @@ FetchContent_Declare(fmtlib
         GIT_REPOSITORY git@github.com:fmtlib/fmt.git
         GIT_TAG 7.0.3)
 BuildCmakeContent(fmtlib fmt
-    CMAKE_ARGS
+        CMAKE_ARGS
         "-DFMT_TEST=OFF"
         "-DFMT_DOC=OFF")
 
